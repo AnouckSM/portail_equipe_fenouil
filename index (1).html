@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portail Équipe Fenouil — ST2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:   #1B2A4A;
+    --navy-light: #243356;
+    --bg:     #F2F4F8;
+    --white:  #FFFFFF;
+    --blue:   #3B7FF5;
+    --mint:   #2EC4A9;
+    --amber:  #F5A623;
+    --rose:   #E85D7A;
+    --slate:  #6B7B94;
+    --slate-light: #A8B4C4;
+    --border: #DDE3ED;
+    --text:   #1B2A4A;
+    --text-secondary: #6B7B94;
+    --sidebar-w: 240px;
+    --radius: 12px;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--navy);
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+  }
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .sidebar-logo .team-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: .02em;
+  }
+  .sidebar-logo .team-sub {
+    font-size: 11px;
+    color: var(--slate-light);
+    margin-top: 2px;
+    font-weight: 400;
+  }
+  .sidebar-logo .sprint-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    background: rgba(59,127,245,.18);
+    border: 1px solid rgba(59,127,245,.35);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #7FB3FF;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .sprint-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--mint);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:.5; transform:scale(.7); }
+  }
+
+  .nav-group { padding: 16px 0 8px; }
+  .nav-group-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--slate);
+    padding: 0 24px;
+    margin-bottom: 6px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 9px 24px;
+    cursor: pointer;
+    border-radius: 0;
+    transition: background .15s;
+    text-decoration: none;
+    position: relative;
+  }
+  .nav-item:hover { background: rgba(255,255,255,.06); }
+  .nav-item.active { background: rgba(255,255,255,.1); }
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+    background: var(--item-color, var(--blue));
+  }
+  .nav-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: var(--item-color, var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    opacity: .85;
+  }
+  .nav-item.active .nav-icon { opacity: 1; }
+  .nav-icon svg { width:16px; height:16px; fill: none; stroke: #fff; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .nav-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,.7);
+  }
+  .nav-item.active .nav-label { color: #fff; font-weight: 600; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 20px 24px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    font-size: 11px;
+    color: var(--slate);
+  }
+  .sidebar-footer span { display: block; }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    padding: 40px 48px;
+    max-width: calc(100vw - var(--sidebar-w));
+  }
+
+  /* ── SECTION ── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .section-title-block {}
+  .section-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--section-color, var(--blue));
+    margin-bottom: 4px;
+  }
+  .section-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -.02em;
+  }
+  .section-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 6px;
+    max-width: 520px;
+    line-height: 1.6;
+  }
+
+  /* ── CARDS ── */
+  .card-grid {
+    display: grid;
+    gap: 20px;
+  }
+  .card-grid.cols-2 { grid-template-columns: repeat(auto-fit, minmax(340px,1fr)); }
+  .card-grid.cols-3 { grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); }
+
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 24px;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .card:hover {
+    box-shadow: 0 8px 28px rgba(27,42,74,.08);
+    transform: translateY(-2px);
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .card-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--card-color-bg, #EBF1FE);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .card-icon svg { width:20px; height:20px; fill:none; stroke: var(--card-color, var(--blue)); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .card-title { font-size: 15px; font-weight: 700; color: var(--text); }
+  .card-meta { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .card-body { font-size: 13.5px; color: #3E4E68; line-height: 1.65; }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+  .badge-blue  { background:#EBF1FE; color: var(--blue); }
+  .badge-mint  { background:#E0F7F4; color: #1DA890; }
+  .badge-amber { background:#FEF3E2; color: #C07A10; }
+  .badge-rose  { background:#FDECF1; color: #C9314F; }
+  .badge-navy  { background:#E8ECF4; color: var(--navy); }
+
+  /* ── TIPS ── */
+  .tip-list { display: flex; flex-direction: column; gap: 12px; }
+  .tip-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 14px 16px;
+    background: var(--bg);
+    border-radius: 8px;
+    border-left: 3px solid var(--tip-color, var(--blue));
+  }
+  .tip-item .tip-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--tip-color, var(--blue));
+    min-width: 24px;
+    padding-top: 1px;
+  }
+  .tip-item .tip-text { font-size: 13px; color: var(--text); line-height: 1.6; }
+  .tip-item .tip-text code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: rgba(59,127,245,.1);
+    color: var(--blue);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  /* ── RETRO ── */
+  .retro-columns {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 16px;
+  }
+  .retro-col {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .retro-col-header {
+    padding: 14px 18px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .retro-col-body { padding: 10px 14px 14px; display: flex; flex-direction:column; gap: 8px; }
+  .retro-note {
+    background: var(--note-bg, #F2F4F8);
+    border-radius: 7px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+    position: relative;
+    border-left: 3px solid var(--note-border, var(--border));
+  }
+  .retro-note .votes {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+  .plus-dot { color: var(--mint); font-size: 13px; }
+
+  /* ── LINKS ── */
+  .link-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 14px; }
+  .link-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--text);
+    transition: box-shadow .2s, transform .2s;
+  }
+  .link-card:hover {
+    box-shadow: 0 6px 20px rgba(27,42,74,.1);
+    transform: translateY(-2px);
+    border-color: var(--link-color, var(--blue));
+  }
+  .link-card .link-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: var(--link-color-bg, #EBF1FE);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+  .link-card .link-info {}
+  .link-card .link-name { font-size: 13px; font-weight: 600; }
+  .link-card .link-url  { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .link-card .ext-icon  { margin-left: auto; color: var(--slate-light); }
+  .link-card .ext-icon svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* ── CHARTE ── */
+  .charte-block {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .charte-block-header {
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .charte-block-header .ch-icon {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--ch-color-bg);
+  }
+  .charte-block-header .ch-icon svg { width:17px; height:17px; fill:none; stroke: var(--ch-color); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .charte-block-header .ch-title { font-size: 14px; font-weight: 700; }
+  .charte-block-body { padding: 20px 24px; }
+  .value-list { display: flex; flex-direction: column; gap: 10px; }
+  .value-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .value-marker {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--ch-color-bg);
+    color: var(--ch-color);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .value-text { font-size: 13.5px; color: #3E4E68; line-height: 1.6; }
+  .value-text strong { color: var(--text); }
+
+  /* ── ACCORDION ── */
+  .accordion { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .accordion-item { border-bottom: 1px solid var(--border); }
+  .accordion-item:last-child { border-bottom: none; }
+  .accordion-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--white);
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: left;
+    gap: 12px;
+    font-family: 'Inter', sans-serif;
+    transition: background .15s;
+  }
+  .accordion-toggle:hover { background: var(--bg); }
+  .accordion-toggle .acc-chevron { transition: transform .2s; color: var(--slate-light); }
+  .accordion-toggle.open .acc-chevron { transform: rotate(180deg); }
+  .accordion-toggle.open { background: var(--bg); }
+  .accordion-body {
+    display: none;
+    padding: 4px 20px 18px;
+    background: var(--white);
+    font-size: 13px;
+    color: #3E4E68;
+    line-height: 1.7;
+  }
+  .accordion-body.open { display: block; }
+
+  /* ── TEAM MEMBERS ── */
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 16px; }
+  .member-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    transition: box-shadow .2s;
+  }
+  .member-card:hover { box-shadow: 0 6px 20px rgba(27,42,74,.08); }
+  .member-avatar {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .member-name { font-size: 14px; font-weight: 700; }
+  .member-role { font-size: 11px; color: var(--text-secondary); }
+  .member-tags { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+  /* ── ADD BUTTON ── */
+  .add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    background: var(--section-color, var(--blue));
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .add-btn:hover { opacity: .88; }
+  .add-btn svg { width:15px; height:15px; fill:none; stroke:#fff; stroke-width:2.2; stroke-linecap:round; }
+
+  /* ── SPRINT BANNER ── */
+  .sprint-banner {
+    background: linear-gradient(135deg, var(--navy) 0%, #2A4080 100%);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .sprint-banner::after {
+    content: '';
+    position: absolute;
+    right: -40px; top: -40px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(59,127,245,.12);
+  }
+  .sprint-banner-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .sprint-banner-stat .num { font-size: 32px; font-weight: 800; color: #fff; letter-spacing: -.03em; }
+  .sprint-banner-stat .lbl { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+  .sprint-divider { width: 1px; height: 48px; background: rgba(255,255,255,.12); }
+  .sprint-banner-main { flex: 1; }
+  .sprint-banner-main .sprint-label { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--mint); margin-bottom: 4px; }
+  .sprint-banner-main .sprint-title { font-size: 20px; font-weight: 700; color: #fff; }
+  .sprint-banner-main .sprint-dates { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 4px; }
+  .progress-bar { margin-top: 12px; background: rgba(255,255,255,.1); border-radius: 4px; height: 6px; width: 100%; }
+  .progress-fill { height: 6px; border-radius: 4px; background: var(--mint); width: 60%; }
+
+  /* ── EDITABLE ── */
+  [contenteditable="true"]:focus {
+    outline: 2px dashed var(--blue);
+    border-radius: 4px;
+    background: rgba(59,127,245,.04);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2EC4A9,#3B7FF5);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg viewBox="0 0 32 32" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="16" y1="28" x2="16" y2="8" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="16" y1="8" x2="10" y2="4" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="16" y1="8" x2="13" y2="3" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="16" y1="8" x2="16" y2="2.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="16" y1="8" x2="19" y2="3" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="16" y1="8" x2="22" y2="4" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+          <circle cx="10" cy="3.5" r="1.2" fill="white"/>
+          <circle cx="13" cy="2.5" r="1.2" fill="white"/>
+          <circle cx="16" cy="2" r="1.2" fill="white"/>
+          <circle cx="19" cy="2.5" r="1.2" fill="white"/>
+          <circle cx="22" cy="3.5" r="1.2" fill="white"/>
+          <path d="M16 14 Q11 12 9 15" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+          <path d="M16 18 Q11 16 9 19" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+          <path d="M16 14 Q21 12 23 15" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+          <path d="M16 18 Q21 16 23 19" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+          <ellipse cx="16" cy="26" rx="4" ry="2.5" stroke="white" stroke-width="1.5" fill="none"/>
+        </svg>
+      </div>
+      <div>
+        <div class="team-name">Équipe Fenouil</div>
+        <div class="team-sub">ST2 · Agile Squad</div>
+      </div>
+    </div>
+    <div class="sprint-badge"><div class="sprint-dot"></div> Sprint 14 en cours</div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Vue d'ensemble</div>
+    <a class="nav-item active" data-section="accueil" style="--item-color:#3B7FF5" onclick="nav(this)">
+      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="nav-label">Accueil</span>
+    </a>
+    <a class="nav-item" data-section="equipe" style="--item-color:#2EC4A9" onclick="nav(this)">
+      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+      <span class="nav-label">L'équipe</span>
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Ressources</div>
+    <a class="nav-item" data-section="retros" style="--item-color:#E85D7A" onclick="nav(this)">
+      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+      <span class="nav-label">Mémos rétros</span>
+    </a>
+    <a class="nav-item" data-section="jira" style="--item-color:#F5A623" onclick="nav(this)">
+      <div class="nav-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <span class="nav-label">Tips JIRA</span>
+    </a>
+    <a class="nav-item" data-section="liens" style="--item-color:#2EC4A9" onclick="nav(this)">
+      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div>
+      <span class="nav-label">Liens utiles</span>
+    </a>
+    <a class="nav-item" data-section="charte" style="--item-color:#3B7FF5" onclick="nav(this)">
+      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <span class="nav-label">Charte équipe</span>
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Process</div>
+    <a class="nav-item" data-section="faq" style="--item-color:#7B6CF6" onclick="nav(this)">
+      <div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <span class="nav-label">FAQ & Process</span>
+    </a>
+  </div>
+
+  <div class="sidebar-footer">
+    <span>Dernière mise à jour</span>
+    <span id="last-update" style="color:rgba(255,255,255,.45); margin-top:2px;"></span>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+  <!-- ACCUEIL -->
+  <section class="section active" id="accueil" style="--section-color:#3B7FF5">
+    <div class="section-header">
+      <div class="section-title-block">
+        <div class="section-eyebrow">Vue d'ensemble</div>
+        <h1 class="section-title">Bonjour, Fenouil 🌿</h1>
+        <p class="section-desc">Votre espace central pour tout ce qui concerne la vie de l'équipe : rétros, outils, charte et bonnes pratiques.</p>
+      </div>
+    </div>
+
+    <div class="sprint-banner">
+      <div class="sprint-banner-main">
+        <div class="sprint-label">Sprint actif</div>
+        <div class="sprint-title" contenteditable="true">Sprint 14 — Refonte Checkout</div>
+        <div class="sprint-dates" contenteditable="true">2 juin → 13 juin 2025 · 10 jours</div>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+      </div>
+      <div class="sprint-divider"></div>
+      <div class="sprint-banner-stat">
+        <div class="num" contenteditable="true">18</div>
+        <div class="lbl">Story points</div>
+      </div>
+      <div class="sprint-divider"></div>
+      <div class="sprint-banner-stat">
+        <div class="num" contenteditable="true">7</div>
+        <div class="lbl">Tickets actifs</div>
+      </div>
+      <div class="sprint-divider"></div>
+      <div class="sprint-banner-stat">
+        <div class="num" contenteditable="true">3</div>
+        <div class="lbl">Bloqués</div>
+      </div>
+    </div>
+
+    <div class="card-grid cols-3">
+      <div class="card" style="--card-color:#E85D7A; --card-color-bg:#FDECF1">
+        <div class="card-header">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div><div class="card-title">Dernière rétro</div><div class="card-meta">Sprint 13 · 30 mai</div></div>
+        </div>
+        <div class="card-body" contenteditable="true">Point clé : améliorer la communication entre devs et testeurs. Action : daily sync de 10 min à 9h30.</div>
+      </div>
+      <div class="card" style="--card-color:#F5A623; --card-color-bg:#FEF3E2">
+        <div class="card-header">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div><div class="card-title">Prochains événements</div><div class="card-meta">Agenda de l'équipe</div></div>
+        </div>
+        <div class="card-body" contenteditable="true">
+          📅 <strong>Sprint review</strong> — Vendredi 13 juin, 14h<br>
+          📅 <strong>Rétro Sprint 14</strong> — Vendredi 13 juin, 15h30<br>
+          📅 <strong>Sprint planning S15</strong> — Lundi 16 juin, 9h
+        </div>
+      </div>
+      <div class="card" style="--card-color:#2EC4A9; --card-color-bg:#E0F7F4">
+        <div class="card-header">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          <div><div class="card-title">Santé de l'équipe</div><div class="card-meta">Score bien-être · S14</div></div>
+        </div>
+        <div class="card-body" contenteditable="true">
+          😊 <strong>Moral</strong> : 4.1/5<br>
+          ⚡ <strong>Vélocité</strong> : 21 pts (moy. 19)<br>
+          🎯 <strong>Qualité</strong> : 0 bug critique en prod
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ÉQUIPE -->
+  <section class="section" id="equipe" style="--section-color:#2EC4A9">
+    <div class="section-header">
+      <div class="section-title-block">
+        <div class="section-eyebrow">L'équipe</div>
+        <h1 class="section-title">Qui sommes-nous ?</h1>
+        <p class="section-desc">Membres, rôles et expertises de l'équipe. Cliquez sur un nom pour éditer.</p>
+      </div>
+    </div>
+    <div class="team-grid">
+      <div class="member-card">
+        <div class="member-avatar" style="background:linear-gradient(135deg,#3B7FF5,#2EC4A9)">SM</div>
+        <div class="member-name" contenteditable="true">Votre nom</div>
+        <div class="member-role">Scrum Master</div>
+        <div class="member-tags"><span class="badge badge-blue">Facilitation</span><span class="badge badge-mint">Agile</span></div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar" style="background:linear-gradient(135deg,#E85D7A,#F5A623)">PO</div>
+        <div class="member-name" contenteditable="true">Product Owner</div>
+        <div class="member-role">Product Owner</div>
+        <div class="member-tags"><span class="badge badge-rose">Vision produit</span><span class="badge badge-amber">Backlog</span></div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar" style="background:linear-gradient(135deg,#7B6CF6,#3B7FF5)">BA</div>
+        <div class="member-name" contenteditable="true">Business Analyst</div>
+        <div class="member-role">Business Analyst</div>
+        <div class="member-tags"><span class="badge badge-navy">Specs</span><span class="badge badge-blue">Analyse</span></div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar" style="background:linear-gradient(135deg,#2EC4A9,#3B7FF5)">DEV</div>
+        <div class="member-name" contenteditable="true">Développeur 1</div>
+        <div class="member-role">Développeur Front</div>
+        <div class="member-tags"><span class="badge badge-blue">React</span><span class="badge badge-mint">TypeScript</span></div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar" style="background:linear-gradient(135deg,#1B2A4A,#3B7FF5)">DEV</div>
+        <div class="member-name" contenteditable="true">Développeur 2</div>
+        <div class="member-role">Développeur Back</div>
+        <div class="member-tags"><span class="badge badge-navy">Java</span><span class="badge badge-blue">API</span></div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar" style="background:linear-gradient(135deg,#F5A623,#E85D7A)">QA</div>
+        <div class="member-name" contenteditable="true">Testeur QA</div>
+        <div class="member-role">Quality Analyst</div>
+        <div class="member-tags"><span class="badge badge-amber">Tests auto</span><span class="badge badge-rose">Recette</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RÉTROS -->
+  <section class="section" id="retros" style="--section-color:#E85D7A">
+    <div class="section-header">
+      <div class="section-title-block">
+        <div class="section-eyebrow">Rétrospectives</div>
+        <h1 class="section-title">Mémos rétros</h1>
+        <p class="section-desc">Gardez une trace de vos apprentissages et actions d'amélioration sprint après sprint.</p>
+      </div>
+      <button class="add-btn" style="background:#E85D7A" onclick="addRetro()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nouvelle rétro
+      </button>
+    </div>
+
+    <div id="retros-container">
+      <!-- Sprint 13 -->
+      <div class="card" style="margin-bottom:24px">
+        <div class="card-header">
+          <div class="card-icon" style="background:#FDECF1"><svg viewBox="0 0 24 24" style="stroke:#E85D7A"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="card-title" contenteditable="true">Rétro Sprint 13</div>
+              <span class="badge badge-rose">30 mai 2025</span>
+            </div>
+            <div class="card-meta" contenteditable="true">Format : Start / Stop / Continue — Participants : 6</div>
+          </div>
+        </div>
+        <div class="retro-columns">
+          <div class="retro-col">
+            <div class="retro-col-header" style="background:#E0F7F4; color:#1DA890">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#1DA890" stroke-width="2.2" stroke-linecap="round"><polyline points="22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Ce qui s'est bien passé
+            </div>
+            <div class="retro-col-body">
+              <div class="retro-note" style="--note-border:#2EC4A9; --note-bg:#F0FDFB" contenteditable="true">Bonne collaboration entre devs et QA pour les tests de régression 👌</div>
+              <div class="retro-note" style="--note-border:#2EC4A9; --note-bg:#F0FDFB" contenteditable="true">Daily rapides et efficaces cette semaine</div>
+            </div>
+          </div>
+          <div class="retro-col">
+            <div class="retro-col-header" style="background:#FDECF1; color:#C9314F">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#C9314F" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              À améliorer
+            </div>
+            <div class="retro-col-body">
+              <div class="retro-note" style="--note-border:#E85D7A; --note-bg:#FEF7F9" contenteditable="true">Specs pas toujours prêtes à temps pour le sprint planning</div>
+              <div class="retro-note" style="--note-border:#E85D7A; --note-bg:#FEF7F9" contenteditable="true">Trop de tickets bloqués en attente de validation PO</div>
+            </div>
+          </div>
+          <div class="retro-col">
+            <div class="retro-col-header" style="background:#EBF1FE; color:#2A5FC0">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#2A5FC0" stroke-width="2.2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Actions décidées
+            </div>
+            <div class="retro-col-body">
+              <div class="retro-note" style="--note-border:#3B7FF5; --note-bg:#F5F8FF" contenteditable="true">✅ Daily sync QA/Dev ajoutée à 9h30 — <strong>Responsable : SM</strong></div>
+              <div class="retro-note" style="--note-border:#3B7FF5; --note-bg:#F5F8FF" contenteditable="true">✅ Template de spec à remplir 3j avant le planning — <strong>Responsable : BA</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JIRA TIPS -->
+  <section class="section" id="jira" style="--section-color:#F5A623">
+    <div class="section-header">
+      <div class="section-title-block">
+        <div class="section-eyebrow">Bonnes pratiques</div>
+        <h1 class="section-title">Tips JIRA</h1>
+        <p class="section-desc">Conventions et astuces pour utiliser JIRA efficacement en équipe. Cliquez pour éditer.</p>
+      </div>
+    </div>
+
+    <div class="card-grid cols-2" style="margin-bottom:24px">
+      <div class="card" style="--card-color:#F5A623; --card-color-bg:#FEF3E2">
+        <div class="card-header">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+          <div><div class="card-title">Nommage des tickets</div><div class="card-meta">Convention équipe</div></div>
+        </div>
+        <div class="tip-list">
+          <div class="tip-item" style="--tip-color:#F5A623">
+            <div class="tip-num">01</div>
+            <div class="tip-text">User Story : <code>[US] En tant que… je veux… afin de…</code></div>
+          </div>
+          <div class="tip-item" style="--tip-color:#F5A623">
+            <div class="tip-num">02</div>
+            <div class="tip-text">Bug : <code>[BUG] Contexte — Comportement observé</code></div>
+          </div>
+          <div class="tip-item" style="--tip-color:#F5A623">
+            <div class="tip-num">03</div>
+            <div class="tip-text">Tâche technique : <code>[TECH] Description courte et actionnable</code></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="--card-color:#F5A623; --card-color-bg:#FEF3E2">
+        <div class="card-header">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+          <div><div class="card-title">Statuts du workflow</div><div class="card-meta">Quand changer de colonne ?</div></div>
+        </div>
+        <div class="tip-list">
+          <div class="tip-item" style="--tip-color:#6B7B94">
+            <div class="tip-num" style="color:#6B7B94">📋</div>
+            <div class="tip-text"><strong>Backlog</strong> → ticket créé, pas encore priorisé</div>
+          </div>
+          <div class="tip-item" style="--tip-color:#3B7FF5">
+            <div class="tip-num" style="color:#3B7FF5">🔵</div>
+            <div class="tip-text"><strong>À faire</strong> → dans le sprint, prêt à être pris</div>
+          </div>
+          <div class="tip-item" style="--tip-color:#F5A623">
+            <div class="tip-num" style="color:#F5A623">🟡</div>
+            <div class="tip-text"><strong>En cours</strong> → quelqu'un est assigné et travaille dessus</div>
+          </div>
+          <div class="tip-item" style="--tip-color:#E85D7A">
+            <div class="tip-num" style="color:#E85D7A">🔴</div>
+            <div class="tip-text"><strong>En review</strong> → PR ouverte ou en attente de validation</div>
+          </div>
+          <div class="tip-item" style="--tip-color:#2EC4A9">
+            <div class="tip-num" style="color:#2EC4A9">✅</div>
+            <div class="tip-text"><strong>Done</strong> → testé, validé par le PO, deployé</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:#FEF3E2"><svg viewBox="0 0 24 24" style="stroke:#F5A623"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <div><div class="card-title">Raccourcis clavier JIRA</div><div class="card-meta">Gagnez du temps au quotidien</div></div>
+      </div>
+      <div class="tip-list">
+        <div class="tip-item" style="--tip-color:#F5A623">
+          <div class="tip-num">⌨️</div>
+          <div class="tip-text"><code>C</code> — Créer un ticket rapidement depuis n'importe où</div>
+        </div>
+        <div class="tip-item" style="--tip-color:#F5A623">
+          <div class="tip-num">⌨️</div>
+          <div class="tip-text"><code>G then B</code> — Aller au backlog du projet</div>
+        </div>
+        <div class="tip-item" style="--tip-color:#F5A623">
+          <div class="tip-num">⌨️</div>
+          <div class="tip-text"><code>G then A</code> — Voir vos tickets assignés</div>
+        </div>
+        <div class="tip-item" style="--tip-color:#F5A623">
+          <div class="tip-num">⌨️</div>
+          <div class="tip-text"><code>?</code> — Afficher tous les raccourcis disponibles</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIENS UTILES -->
+  <section class="section" id="liens" style="--section-color:#2EC4A9">
+    <div class="section-header">
+      <div class="section-title-block">
+        <div class="section-eyebrow">Ressources</div>
+        <h1 class="section-title">Liens utiles</h1>
+        <p class="section-desc">Tous vos outils et références au même endroit. Éditez les URLs en cliquant sur les cartes.</p>
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <div class="badge badge-mint" style="margin-bottom:12px">🛠️ Outils quotidiens</div>
+      <div class="link-grid">
+        <a href="#" class="link-card" style="--link-color:#0052CC; --link-color-bg:#E8F0FF">
+          <div class="link-icon">🟦</div>
+          <div class="link-info">
+            <div class="link-name" contenteditable="true">JIRA Board</div>
+            <div class="link-url" contenteditable="true">votre-org.atlassian.net/jira</div>
+          </div>
+          <div class="ext-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+        </a>
+        <a href="#" class="link-card" style="--link-color:#1868DB; --link-color-bg:#E8F0FF">
+          <div class="link-icon">📐</div>
+          <div class="link-info">
+            <div class="link-name" contenteditable="true">Confluence</div>
+            <div class="link-url" contenteditable="true">votre-org.atlassian.net/wiki</div>
+          </div>
+          <div class="ext-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+        </a>
+        <a href="#" class="link-card" style="--link-color:#4A154B; --link-color-bg:#F0E8F5">
+          <div class="link-icon">💬</div>
+          <div class="link-info">
+            <div class="link-name" contenteditable="true">Slack Équipe</div>
+            <div class="link-url" contenteditable="true">#squad-phoenix</div>
+          </div>
+          <div class="ext-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+        </a>
+        <a href="#" class="link-card" style="--link-color:#0078D4; --link-color-bg:#E6F2FF">
+          <div class="link-icon">📅</div>
+          <div class="link-info">
+            <div class="link-name" contenteditable="true">Calendrier Équipe</div>
+            <div class="link-url" contenteditable="true">Teams / Outlook partagé</div>
+          </div>
+          <div class="ext-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+        </a>
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <div class="badge badge-blue" style="margin-bottom:12px">📚 Références</div>
+      <div class="link-grid">
+        <a href="#" class="link-card" style="--link-color:#2EC4A9; --link-color-bg:#E0F7F4">
+          <div class="link-icon">🧪</div>
+          <div class="link-info">
+            <div class="link-name" contenteditable="true">Environnement de test</div>
+            <div class="link-url" contenteditable="true">test.votre-app.com</div>
+          </div>
+          <div class="ext-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+        </a>
+        <a href="#" class="link-card" style="--link-color:#24292F; --link-color-bg:#F0F0F0">
+          <div class="link-icon">🐙</div>
+          <div class="link-info">
+            <div class="link-name" contenteditable="true">GitHub / GitLab</div>
+            <div class="link-url" contenteditable="true">github.com/votre-org</div>
+          </div>
+          <div class="ext-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+        </a>
+        <a href="#" class="link-card" style="--link-color:#F24E1E; --link-color-bg:#FEEDE8">
+          <div class="link-icon">🎨</div>
+          <div class="link-info">
+            <div class="link-name" contenteditable="true">Figma</div>
+            <div class="link-url" contenteditable="true">figma.com/votre-projet</div>
+          </div>
+          <div class="ext-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+        </a>
+        <a href="#" class="link-card" style="--link-color:#FF5630; --link-color-bg:#FFECEA">
+          <div class="link-icon">📊</div>
+          <div class="link-info">
+            <div class="link-name" contenteditable="true">Monitoring / Datadog</div>
+            <div class="link-url" contenteditable="true">app.datadoghq.com</div>
+          </div>
+          <div class="ext-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHARTE ÉQUIPE -->
+  <section class="section" id="charte" style="--section-color:#3B7FF5">
+    <div class="section-header">
+      <div class="section-title-block">
+        <div class="section-eyebrow">Notre identité</div>
+        <h1 class="section-title">Charte d'équipe</h1>
+        <p class="section-desc">Nos valeurs, nos engagements et nos règles du jeu. Ce document appartient à toute l'équipe.</p>
+      </div>
+    </div>
+
+    <div class="charte-block">
+      <div class="charte-block-header" style="--ch-color:#3B7FF5; --ch-color-bg:#EBF1FE">
+        <div class="ch-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="ch-title">🎯 Notre mission</div>
+      </div>
+      <div class="charte-block-body">
+        <p contenteditable="true" style="font-size:15px;line-height:1.7;color:#2A3A5A;font-weight:500">
+          Livrer de la valeur métier de façon régulière, prévisible et durable, tout en prenant soin du bien-être de chaque membre de l'équipe.
+        </p>
+      </div>
+    </div>
+
+    <div class="charte-block">
+      <div class="charte-block-header" style="--ch-color:#2EC4A9; --ch-color-bg:#E0F7F4">
+        <div class="ch-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+        <div class="ch-title">💚 Nos valeurs</div>
+      </div>
+      <div class="charte-block-body">
+        <div class="value-list" style="--ch-color:#2EC4A9; --ch-color-bg:#E0F7F4">
+          <div class="value-item">
+            <div class="value-marker">1</div>
+            <div class="value-text" contenteditable="true"><strong>Transparence</strong> — On dit les choses telles qu'elles sont, même quand c'est difficile. Pas de mauvaises surprises.</div>
+          </div>
+          <div class="value-item">
+            <div class="value-marker">2</div>
+            <div class="value-text" contenteditable="true"><strong>Respect mutuel</strong> — Chaque rôle a de la valeur. On critique les idées, jamais les personnes.</div>
+          </div>
+          <div class="value-item">
+            <div class="value-marker">3</div>
+            <div class="value-text" contenteditable="true"><strong>Amélioration continue</strong> — On n'a pas à être parfaits, on doit progresser à chaque sprint.</div>
+          </div>
+          <div class="value-item">
+            <div class="value-marker">4</div>
+            <div class="value-text" contenteditable="true"><strong>Ownership collectif</strong> — Le succès et l'échec sont partagés. On ne cherche pas de coupable, on cherche des solutions.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="charte-block">
+      <div class="charte-block-header" style="--ch-color:#E85D7A; --ch-color-bg:#FDECF1">
+        <div class="ch-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <div class="ch-title">🤝 Nos engagements</div>
+      </div>
+      <div class="charte-block-body">
+        <div class="value-list" style="--ch-color:#E85D7A; --ch-color-bg:#FDECF1">
+          <div class="value-item">
+            <div class="value-marker" style="background:#FDECF1; color:#E85D7A">✓</div>
+            <div class="value-text" contenteditable="true">Être présent et ponctuel aux cérémonies Scrum (daily, planning, review, rétro)</div>
+          </div>
+          <div class="value-item">
+            <div class="value-marker" style="background:#FDECF1; color:#E85D7A">✓</div>
+            <div class="value-text" contenteditable="true">Signaler immédiatement tout blocage plutôt que d'attendre le lendemain</div>
+          </div>
+          <div class="value-item">
+            <div class="value-marker" style="background:#FDECF1; color:#E85D7A">✓</div>
+            <div class="value-text" contenteditable="true">Mettre à jour les tickets JIRA au fil de l'eau (au moins une fois par jour)</div>
+          </div>
+          <div class="value-item">
+            <div class="value-marker" style="background:#FDECF1; color:#E85D7A">✓</div>
+            <div class="value-text" contenteditable="true">Participer activement aux rétros — les idées de chacun font progresser le groupe</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq" style="--section-color:#7B6CF6">
+    <div class="section-header">
+      <div class="section-title-block">
+        <div class="section-eyebrow">Process</div>
+        <h1 class="section-title">FAQ & Process</h1>
+        <p class="section-desc">Les questions fréquentes et les processus clés de l'équipe.</p>
+      </div>
+    </div>
+
+    <div class="card-grid cols-2">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#7B6CF6;margin-bottom:12px">🔄 Processus Scrum</div>
+        <div class="accordion">
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="toggleAcc(this)">
+              Quelle est la durée de nos sprints ?
+              <svg class="acc-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="accordion-body" contenteditable="true">Nos sprints durent <strong>2 semaines</strong>, du lundi matin au vendredi soir. Le sprint planning a lieu le lundi matin de la première semaine, et la review + rétro le vendredi de la deuxième semaine.</div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="toggleAcc(this)">
+              Comment soumettre une User Story au backlog ?
+              <svg class="acc-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="accordion-body" contenteditable="true">Créez un ticket JIRA en utilisant le template US. Ajoutez a minima : le contexte métier, les critères d'acceptance, et une estimation de complexité. Le BA valide la spec, puis le PO priorise dans le backlog.</div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="toggleAcc(this)">
+              Définition of Done (DoD)
+              <svg class="acc-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="accordion-body" contenteditable="true">Un ticket est "Done" quand : ✅ Code revu et mergé · ✅ Tests unitaires passants · ✅ Tests QA validés · ✅ Déployé en environnement de test · ✅ Démontré et accepté par le PO · ✅ Ticket JIRA mis à jour.</div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="toggleAcc(this)">
+              Comment gérer un blocage ?
+              <svg class="acc-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="accordion-body" contenteditable="true">1. Taguer le ticket JIRA avec le label <code>BLOCKED</code> et noter la raison. 2. Mentionner le blocage au prochain daily. 3. Si le blocage dure plus de 4h, contacter directement le SM. On ne reste jamais bloqué seul en silence !</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#7B6CF6;margin-bottom:12px">💻 Process technique</div>
+        <div class="accordion">
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="toggleAcc(this)">
+              Convention de nommage des branches
+              <svg class="acc-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="accordion-body" contenteditable="true">Format : <code>type/PROJ-123-description-courte</code><br>Types : <code>feature/</code> · <code>fix/</code> · <code>hotfix/</code> · <code>chore/</code><br>Exemple : <code>feature/PHOE-456-ajout-panier</code></div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="toggleAcc(this)">
+              Process de code review
+              <svg class="acc-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="accordion-body" contenteditable="true">Toute PR nécessite <strong>2 approbations</strong>. La review doit être faite dans les 24h ouvrées. Si pas de retour sous 24h, relance directe en DM. Les commentaires doivent être constructifs et expliquer le pourquoi.</div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="toggleAcc(this)">
+              Quand et comment déployer ?
+              <svg class="acc-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="accordion-body" contenteditable="true">Déploiements en recette : automatiques à chaque merge sur <code>develop</code>. Déploiements en production : le <strong>mardi et jeudi avant 16h</strong> uniquement, avec validation du PO et du lead dev. Jamais de déploiement le vendredi.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // Navigation
+  function nav(el) {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(el.dataset.section).classList.add('active');
+  }
+
+  // Accordion
+  function toggleAcc(btn) {
+    const body = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    btn.classList.toggle('open', !isOpen);
+    body.classList.toggle('open', !isOpen);
+  }
+
+  // Add retro
+  function addRetro() {
+    const container = document.getElementById('retros-container');
+    const num = container.querySelectorAll('.card').length + 1;
+    const html = `
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-header">
+        <div class="card-icon" style="background:#FDECF1"><svg viewBox="0 0 24 24" style="stroke:#E85D7A;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;width:20px;height:20px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="card-title" contenteditable="true">Rétro Sprint ${13 + num}</div>
+            <span class="badge badge-rose" contenteditable="true">Date</span>
+          </div>
+          <div class="card-meta" contenteditable="true">Format : Start / Stop / Continue</div>
+        </div>
+      </div>
+      <div class="retro-columns">
+        <div class="retro-col">
+          <div class="retro-col-header" style="background:#E0F7F4; color:#1DA890">✅ Ce qui s'est bien passé</div>
+          <div class="retro-col-body">
+            <div class="retro-note" style="--note-border:#2EC4A9; --note-bg:#F0FDFB" contenteditable="true">Cliquez pour éditer…</div>
+          </div>
+        </div>
+        <div class="retro-col">
+          <div class="retro-col-header" style="background:#FDECF1; color:#C9314F">⚠️ À améliorer</div>
+          <div class="retro-col-body">
+            <div class="retro-note" style="--note-border:#E85D7A; --note-bg:#FEF7F9" contenteditable="true">Cliquez pour éditer…</div>
+          </div>
+        </div>
+        <div class="retro-col">
+          <div class="retro-col-header" style="background:#EBF1FE; color:#2A5FC0">⚡ Actions décidées</div>
+          <div class="retro-col-body">
+            <div class="retro-note" style="--note-border:#3B7FF5; --note-bg:#F5F8FF" contenteditable="true">Cliquez pour éditer…</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+    container.insertAdjacentHTML('afterbegin', html);
+  }
+
+  // Last update date
+  document.getElementById('last-update').textContent = new Date().toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+</script>
+</body>
+</html>
